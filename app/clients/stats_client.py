@@ -10,7 +10,7 @@ async def process_batch_sessions(sessions: list[dict], raw_token: str) -> dict:
         
         #TODO: change to real direction
         response = await client.post(
-            f"{STATS_URL}/api/v1/sessions/sincronizate", 
+            f"{STATS_URL}/api/v1/sessions/batch", 
             json=payload, 
             headers=headers
         )

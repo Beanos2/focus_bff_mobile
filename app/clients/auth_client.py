@@ -10,7 +10,7 @@ async def add_batch_exp(total_exp: int, raw_token: str) -> dict:
         
         #TODO: change to real direction        
         response = await client.patch(
-            f"{AUTH_URL}/api/v1/users/me/exp", 
+            f"{AUTH_URL}/api/v1/users/me/exp/batch", 
             json=payload, 
             headers=headers
         )

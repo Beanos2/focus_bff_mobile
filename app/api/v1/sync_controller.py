@@ -1,5 +1,4 @@
 from litestar import Controller, post,status_codes, Request
-from litestar.security.jwt import Token
 from litestar.exceptions import HTTPException
 from app.clients import stats_client, auth_client, inv_client
 
@@ -7,7 +6,7 @@ class SyncController(Controller):
     path = "/api/v1/sync"
 
     @post()
-    async def sync_offline_data(self, request: Request, data: dict, req_token: Token) -> dict:
+    async def sync_offline_data(self, request: Request, data: dict) -> dict:
         
         auth_header = request.headers.get("Authorization")
         raw_token = auth_header.replace("Bearer ", "") if auth_header else ""
