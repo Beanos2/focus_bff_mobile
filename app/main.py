@@ -1,7 +1,8 @@
 import os
 import uvicorn
-from litestar import Litestar
+from litestar import Litestar, Router
 from dotenv import load_dotenv
+from app.core.openapi import openapi_config
 from app.core.security import jwt_auth
 from app.api.v1.sync_controller import SyncController
 from app.api.v1.auth_controller import AuthController
@@ -12,15 +13,19 @@ load_dotenv()
 
 PUERTO = int(os.getenv("LITESTAR_PORT", 8000))
 
+api_v1_router = Router(
+    path="/api/v1",
+    route_handlers=[
+        AuthController, 
+        SyncController,
+        MsStatusController
+    ]
+)
 
 app = Litestar(
-    path="api/v1",
-    route_handlers=[
-        MsStatusController,
-        SyncController,
-        AuthController
-    ],
+    route_handlers=[api_v1_router],
     on_app_init=[jwt_auth.on_app_init],
+    openapi_config=openapi_config,
 )
 
 if __name__ == "__main__":
