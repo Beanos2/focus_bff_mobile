@@ -1,7 +1,7 @@
 import httpx
 from litestar import Controller, post
 from litestar.exceptions import HTTPException
-
+from app.domain.structs import RegisterPayload, RegisterResponse, LoginPayload, TokenResponse
 
 from app.clients.auth_client import proxy_register, proxy_login
 
@@ -10,9 +10,10 @@ class AuthController(Controller):
     tags = ["Autenticación"]
 
     @post("/register")
-    async def register(self, data: dict) -> dict:
+    async def register(self, data: RegisterPayload) -> RegisterResponse:
         try:
-            return await proxy_register(data)
+            response_dict = await proxy_register(data.to_dict())
+            return RegisterResponse.from_dict(response_dict)          
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 detail="Error en el registro (¿Correo duplicado?)", 
@@ -20,9 +21,10 @@ class AuthController(Controller):
             )
         
     @post("/login")
-    async def login(self, data: dict) -> dict:
+    async def login(self, data: LoginPayload) -> TokenResponse:
         try:
-            return await proxy_login(data)
+            response_dict = await proxy_login(data.to_dict())
+            return TokenResponse.from_dict(response_dict)
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 detail="Credenciales inválidas", 
