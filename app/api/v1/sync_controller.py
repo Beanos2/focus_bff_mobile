@@ -4,7 +4,8 @@ from app.clients import stats_client, auth_client, inv_client
 
 class SyncController(Controller):
     path = "/sync"
-
+    tags = ["Sincronización"]
+    
     @post()
     async def sync_offline_data(self, request: Request, data: dict) -> dict:
         

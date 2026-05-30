@@ -1,6 +1,7 @@
 from litestar import Controller, get
 
 class MsStatusController(Controller):
+    tags = ["Estatus"]
     
     @get("/health")
     async def health_check(self) -> dict:

@@ -7,6 +7,7 @@ from app.clients.auth_client import proxy_register, proxy_login
 
 class AuthController(Controller):
     path = "/auth"
+    tags = ["Autenticación"]
 
     @post("/register")
     async def register(self, data: dict) -> dict:
