@@ -1,7 +1,7 @@
 import os
 from app.clients.base import get_http_client
 
-INV_URL = os.getenv("INVENTORY_SERVICE_URL")
+INV_URL = os.getenv("INVENTORY_SERVICE_URL","http://127.0.0.1:8003")
 
 async def grant_random_item(raw_token: str) -> dict:
     async with await get_http_client() as client:

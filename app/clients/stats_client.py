@@ -1,7 +1,7 @@
 import os
 from app.clients.base import get_http_client
 
-STATS_URL = os.getenv("STATS_SERVICE_URL")
+STATS_URL = os.getenv("STATS_SERVICE_URL","http://127.0.0.1:8002")
 
 async def process_batch_sessions(sessions: list[dict], raw_token: str) -> dict:
     async with await get_http_client() as client:

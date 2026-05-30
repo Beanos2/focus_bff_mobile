@@ -1,7 +1,7 @@
 import os
 from app.clients.base import get_http_client
 
-AUTH_URL = os.getenv("AUTH_SERVICE_URL")
+AUTH_URL = os.getenv("AUTH_SERVICE_URL","http://127.0.0.1:8001")
 
 async def add_batch_exp(total_exp: int, raw_token: str) -> dict:
     async with await get_http_client() as client:
