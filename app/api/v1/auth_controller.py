@@ -5,8 +5,8 @@ from litestar.exceptions import HTTPException
 
 from app.clients.auth_client import proxy_register, proxy_login
 
-class AuthBFFController(Controller):
-    path = "/api/v1/auth"
+class AuthController(Controller):
+    path = "/auth"
 
     @post("/register")
     async def register(self, data: dict) -> dict:
