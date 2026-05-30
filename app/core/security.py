@@ -15,6 +15,11 @@ jwt_auth = JWTAuth[str](
     exclude=[
         "/api/v1/auth/login",
         "/api/v1/auth/register",
-        "/api/v1/status/health"
+        "/api/v1/status/health",
+        "/schema",
+        "/schema/swagger",
+        "/schema/openapi.json",
+        "/schema/redoc",
+        "/schema/elements"
     ],    
 )
