@@ -1,27 +1,31 @@
 import os
 import uvicorn
-from litestar import Litestar, get
+from litestar import Litestar, Router
 from dotenv import load_dotenv
+from app.core.openapi import openapi_config
+from app.core.security import jwt_auth
+from app.api.v1.sync_controller import SyncController
+from app.api.v1.auth_controller import AuthController
+from app.api.v1.ms_status_controller import MsStatusController
 
 load_dotenv()
 
-from app.core.security import jwt_auth
-from app.api.v1.sync_controller import SyncController
-from app.api.v1.auth_controller import AuthBFFController
 
 PUERTO = int(os.getenv("LITESTAR_PORT", 8000))
 
-@get("/health")
-async def health_check() -> dict:
-    return {"status": "ok", "service": "bff_orchestrator"}
+api_v1_router = Router(
+    path="/api/v1",
+    route_handlers=[
+        AuthController, 
+        SyncController,
+        MsStatusController
+    ]
+)
 
 app = Litestar(
-    route_handlers=[
-        health_check,
-        SyncController,
-        AuthBFFController
-    ],
+    route_handlers=[api_v1_router],
     on_app_init=[jwt_auth.on_app_init],
+    openapi_config=openapi_config,
 )
 
 if __name__ == "__main__":

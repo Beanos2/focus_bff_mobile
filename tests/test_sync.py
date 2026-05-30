@@ -12,19 +12,19 @@ os.environ["INVENTORY_SERVICE_URL"] = "http://127.0.0.1:8003"
 
 from litestar.testing import TestClient
 from app.main import app
-
+from app.domain.structs import SyncPayload, SessionItem
 
 app.debug = True
 
 def get_test_token() -> str:
     secret = os.getenv("SECRET_KEY", "tu_clave_super_secreta")
     now = datetime.now(timezone.utc)
-    payload = {
+    token_payload = {
         "sub": "123e4567-e89b-12d3-a456-426614174000",
         "exp": now + timedelta(minutes=10),
         "iat": now 
     }
-    return jwt.encode(payload, secret, algorithm="HS256")
+    return jwt.encode(token_payload, secret, algorithm="HS256")
 
 @pytest.fixture
 def client():
@@ -53,24 +53,24 @@ def test_sync_success_with_levelup(client: TestClient, auth_headers: dict):
         ]
     )
 
-    payload = {
-        "sessions": [
-            {
-                "activity_type": "NORMAL",
-                "start_time": "2026-05-26T10:00:00Z",
-                "end_time": "2026-05-26T10:50:00Z",
-                "room_id": None
-            },
-            {
-                "activity_type": "TIME_TRIAL",
-                "start_time": "2026-05-26T11:00:00Z",
-                "end_time": "2026-05-26T11:50:00Z",
-                "room_id": "4a7b9c1d-8e2f-4a3b-9c1d-8e2f4a3b9c1d"
-            }
+    payload = SyncPayload(
+        sessions=[
+            SessionItem(
+                activity_type="NORMAL",
+                start_time="2026-05-26T10:00:00Z",
+                end_time="2026-05-26T10:50:00Z",
+                room_id=None
+            ),
+            SessionItem(
+                activity_type="TIME_TRIAL",
+                start_time="2026-05-26T11:00:00Z",
+                end_time="2026-05-26T11:50:00Z",
+                room_id="4a7b9c1d-8e2f-4a3b-9c1d-8e2f4a3b9c1d"
+            )
         ]
-    }
+    )
 
-    response = client.post("/api/v1/sync", json=payload, headers=auth_headers)
+    response = client.post("/api/v1/sync", json=payload.to_dict(), headers=auth_headers)
     
     assert response.status_code == 201, f"Error interno: {response.text}"    
     data = response.json()
@@ -83,8 +83,6 @@ def test_sync_success_with_levelup(client: TestClient, auth_headers: dict):
     assert data["levels_gained"] == 2
     assert len(data["rewards"]) == 2
     assert data["rewards"][0]["name"] == "Espada de Concentración"
-
-
 
 @respx.mock
 def test_sync_resilience_when_inventory_fails(client: TestClient, auth_headers: dict):
@@ -101,16 +99,18 @@ def test_sync_resilience_when_inventory_fails(client: TestClient, auth_headers: 
         return_value=Response(500, text="Internal Server Error")
     )
 
-    payload = {
-        "sessions": [{
-            "activity_type": "coding",
-            "start_time": "2026-05-26T12:00:00Z",
-            "end_time": "2026-05-26T12:50:00Z",
-            "room_id": None
-        }]
-    }
+    payload = SyncPayload(
+        sessions=[
+            SessionItem(
+                activity_type="coding",
+                start_time="2026-05-26T12:00:00Z",
+                end_time="2026-05-26T12:50:00Z",
+                room_id=None
+            )
+        ]
+    )
 
-    response = client.post("/api/v1/sync", json=payload, headers=auth_headers)
+    response = client.post("/api/v1/sync", json=payload.to_dict(), headers=auth_headers)
     assert response.status_code == 201, f"Error interno: {response.text}"
     data = response.json()
     
@@ -120,8 +120,8 @@ def test_sync_resilience_when_inventory_fails(client: TestClient, auth_headers: 
     assert len(data["rewards"]) == 0
 
 def test_sync_empty_sessions(client: TestClient, auth_headers: dict):
-    payload = {"sessions": []}
-    response = client.post("/api/v1/sync", json=payload, headers=auth_headers)
+    payload = SyncPayload(sessions=[])
+    response = client.post("/api/v1/sync", json=payload.to_dict(), headers=auth_headers)
     
     assert response.status_code == 400
     assert "The request data provided is invalid." in response.json()["detail"]

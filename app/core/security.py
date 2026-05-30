@@ -12,5 +12,14 @@ async def retrieve_user_handler(token: Token, connection: ASGIConnection) -> str
 jwt_auth = JWTAuth[str](
     retrieve_user_handler=retrieve_user_handler,
     token_secret=SECRET_KEY,
-    exclude=["/health"] 
+    exclude=[
+        "/api/v1/auth/login",
+        "/api/v1/auth/register",
+        "/api/v1/status/health",
+        "/schema",
+        "/schema/swagger",
+        "/schema/openapi.json",
+        "/schema/redoc",
+        "/schema/elements"
+    ],    
 )
