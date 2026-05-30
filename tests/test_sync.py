@@ -119,9 +119,9 @@ def test_sync_resilience_when_inventory_fails(client: TestClient, auth_headers: 
     assert data["leveled_up"] is True
     assert len(data["rewards"]) == 0
 
-    def test_sync_empty_sessions(client: TestClient, auth_headers: dict):
-        payload = {"sessions": []}
-        response = client.post("/api/v1/sync", json=payload, headers=auth_headers)
-        
-        assert response.status_code == 400
-        assert "no puede estar vacía" in response.json()["detail"]
+def test_sync_empty_sessions(client: TestClient, auth_headers: dict):
+    payload = {"sessions": []}
+    response = client.post("/api/v1/sync", json=payload, headers=auth_headers)
+    
+    assert response.status_code == 400
+    assert "The request data provided is invalid." in response.json()["detail"]

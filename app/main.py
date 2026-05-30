@@ -7,7 +7,7 @@ load_dotenv()
 
 from app.core.security import jwt_auth
 from app.api.v1.sync_controller import SyncController
-
+from app.api.v1.auth_controller import AuthBFFController
 
 PUERTO = int(os.getenv("LITESTAR_PORT", 8000))
 
@@ -16,7 +16,11 @@ async def health_check() -> dict:
     return {"status": "ok", "service": "bff_orchestrator"}
 
 app = Litestar(
-    route_handlers=[health_check, SyncController],
+    route_handlers=[
+        health_check,
+        SyncController,
+        AuthBFFController
+    ],
     on_app_init=[jwt_auth.on_app_init],
 )
 
