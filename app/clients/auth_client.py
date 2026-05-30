@@ -28,7 +28,7 @@ async def proxy_register(payload: dict) -> dict:
 async def proxy_login(payload: dict) -> dict:
     async with await get_http_client() as client:
         response = await client.post(
-            f"{AUTH_URL}/auth/login", 
+            f"{AUTH_URL}/api/v1/auth/login", 
             json=payload
         )
         response.raise_for_status()
