@@ -19,3 +19,18 @@ async def process_batch_sessions(
     )
     response.raise_for_status()
     return response.json()
+
+async def fetch_session_reports(
+    client: httpx.AsyncClient, 
+    query_params: dict, 
+    raw_token: str
+) -> dict:
+    headers = {"Authorization": f"Bearer {raw_token}"}
+    
+    response = await client.get(
+        f"{STATS_URL}/api/v1/sessions/reports",
+        params=query_params,
+        headers=headers
+    )
+    response.raise_for_status()
+    return response.json()

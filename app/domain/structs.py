@@ -60,3 +60,16 @@ class SyncResponse(BaseModel):
     leveled_up: bool
     levels_gained: int
     rewards: List[RewardItem]
+
+class SessionReportItem(BaseModel):
+    id: str
+    user_id: str
+    activity_type: str
+    start_time: str
+    end_time: str
+    exp_earned: int
+    room_id: Optional[str] = None
+
+class SessionReportResponse(BaseModel):
+    reports: List[SessionReportItem]
+    total_count: int
