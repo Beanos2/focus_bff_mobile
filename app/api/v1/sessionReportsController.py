@@ -9,9 +9,8 @@ from app.clients.stats_client import fetch_session_reports
 from app.clients.room_client import get_room_details
 from app.domain.structs import SessionReportResponse
 
-class SessionsBFFController(Controller):
-    path = "/api/v1/sessions"
-    tags = ["Sesiones e Informes"]
+class SessionsReportsController(Controller):
+    path = "/sessions"
 
     @get("/reports")
     async def get_reports(

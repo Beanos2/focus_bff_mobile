@@ -6,6 +6,7 @@ from app.core.openapi import openapi_config
 from app.core.security import jwt_auth
 from app.api.v1.sync_controller import SyncController
 from app.api.v1.auth_controller import AuthController
+from app.api.v1.sessionReportsController import SessionsReportsController
 from app.api.v1.ms_status_controller import MsStatusController
 from app.core.lifespan import http_client_lifespan
 
@@ -19,7 +20,8 @@ api_v1_router = Router(
     route_handlers=[
         AuthController, 
         SyncController,
-        MsStatusController
+        MsStatusController,
+        SessionsReportsController
     ]
 )
 
