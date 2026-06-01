@@ -13,6 +13,7 @@ openapi_config = OpenAPIConfig(
     tags=[
         Tag(name="Autenticación", description="Proxy de registro y login. No requieren token JWT."),
         Tag(name="Sincronización", description="Endpoints protegidos para sincronizar datos locales del dispositivo."),
-        Tag(name="Estatus", description="Endpoints acerca de el interno del servicio")
+        Tag(name="Reportes", description="Endpoints protegidos acerca de los reportes de actividades"),
+        Tag(name="Estatus", description="Endpoints protegidos acerca de el interno del servicio"),
     ]
 )

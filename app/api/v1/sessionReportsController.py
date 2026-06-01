@@ -1,6 +1,6 @@
 import httpx
 from typing import Optional, Annotated
-from litestar import Controller, get, status_codes, Request
+from litestar import Controller, get, Request
 from litestar.exceptions import HTTPException, PermissionDeniedException
 from litestar.datastructures import State
 from litestar.params import Parameter
@@ -11,7 +11,7 @@ from app.domain.structs import SessionReportResponse
 
 class SessionsReportsController(Controller):
     path = "/sessions"
-
+    tags = ["Reportes"]
     @get("/reports")
     async def get_reports(
         self, 
