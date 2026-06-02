@@ -10,7 +10,7 @@ class AuthController(Controller):
     path = "/auth"
     tags = ["Autenticación"]
 
-    @post("/register")
+    @post("/register", opt={"publico": True})
     async def register(self, state: State, data: RegisterPayload) -> RegisterResponse:
         http_client = state.http_client
         try:
@@ -27,7 +27,7 @@ class AuthController(Controller):
                 status_code=status_codes.HTTP_503_SERVICE_UNAVAILABLE
             )
         
-    @post("/login")
+    @post("/login", opt={"publico": True})
     async def login(self, state: State, data: LoginPayload) -> TokenResponse:
         http_client = state.http_client
         try:
