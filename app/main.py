@@ -29,7 +29,8 @@ app = Litestar(
     route_handlers=[api_v1_router],
     on_app_init=[jwt_auth.on_app_init],
     openapi_config=openapi_config,
-    lifespan=[http_client_lifespan]
+    lifespan=[http_client_lifespan],
+    debug=True
 )
 
 if __name__ == "__main__":
