@@ -72,3 +72,21 @@ class SessionReportItem(BaseModel):
 class SessionReportResponse(BaseModel):
     reports: List[SessionReportItem]
     total_count: int
+
+class ReportFilters(msgspec.Struct):
+    user_id: Optional[UUID] = None
+    room_id: Optional[UUID] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    sort_order: str = "desc"
+    limit: int = 50
+    offset: int = 0
+
+class BatchExpPayload(msgspec.Struct):
+    exp_to_add: int
+
+class BatchExpResponse(msgspec.Struct):
+    new_level: int
+    levels_gained: int
+    leveled_up: bool
+
