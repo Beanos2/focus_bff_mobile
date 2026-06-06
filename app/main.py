@@ -9,9 +9,9 @@ from app.api.v1.auth_controller import AuthController
 from app.api.v1.sessionReportsController import SessionsReportsController
 from app.api.v1.ms_status_controller import MsStatusController
 from app.core.lifespan import http_client_lifespan
+from app.core.exceptions import GLOBAL_EXCEPTION_HANDLERS
 
 load_dotenv()
-
 
 PUERTO = int(os.getenv("LITESTAR_PORT", 8000))
 
@@ -30,7 +30,8 @@ app = Litestar(
     on_app_init=[jwt_auth.on_app_init],
     openapi_config=openapi_config,
     lifespan=[http_client_lifespan],
-    debug=True
+    exception_handlers=GLOBAL_EXCEPTION_HANDLERS,
+    debug=False
 )
 
 if __name__ == "__main__":
