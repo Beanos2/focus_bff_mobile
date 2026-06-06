@@ -90,3 +90,6 @@ class BatchExpResponse(msgspec.Struct):
     levels_gained: int
     leveled_up: bool
 
+class SyncSessionResponse(msgspec.Struct):
+    total_exp_gained: int
+    time_trials_completed: int
