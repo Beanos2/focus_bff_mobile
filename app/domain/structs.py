@@ -1,13 +1,14 @@
 from enum import Enum
 from typing import List, Optional, TypeVar, Type, Any
+from datetime import datetime
+from uuid import UUID
 import msgspec
-
 
 T = TypeVar("T", bound="BaseModel")
 
 class BaseModel(msgspec.Struct):
     def to_dict(self) -> dict[str, Any]:
-        return msgspec.to_builtins(self) # type: ignore
+        return msgspec.to_builtins(self) 
 
     @classmethod
     def from_dict(cls: Type[T], data: dict[str, Any]) -> T:
@@ -17,8 +18,6 @@ class UserRole(str, Enum):
     STUDENT = "student"
     DM = "dm"
     ADMIN = "admin"
-
-# IN
 
 class LoginPayload(BaseModel):
     email: str
@@ -31,25 +30,25 @@ class RegisterPayload(BaseModel):
 
 class SessionItem(BaseModel):
     activity_type: str
-    start_time: str
-    end_time: str
-    room_id: Optional[str] = None
+    start_time: datetime
+    end_time: datetime   
+    room_id: Optional[UUID] = None 
 
 class SyncPayload(BaseModel):
     sessions: List[SessionItem]
 
-# OUT
 
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
 
 class RegisterResponse(BaseModel):
-    id: str
+    message: str 
+    id: UUID    
     email: str
 
 class RewardItem(BaseModel):
-    id: str
+    id: UUID    
     name: str
 
 class SyncResponse(BaseModel):
@@ -62,14 +61,35 @@ class SyncResponse(BaseModel):
     rewards: List[RewardItem]
 
 class SessionReportItem(BaseModel):
-    id: str
-    user_id: str
+    id: UUID        
+    user_id: UUID    
     activity_type: str
-    start_time: str
-    end_time: str
+    start_time: datetime
+    end_time: datetime
     exp_earned: int
-    room_id: Optional[str] = None
+    room_id: Optional[UUID] = None
 
 class SessionReportResponse(BaseModel):
     reports: List[SessionReportItem]
     total_count: int
+
+class ReportFilters(msgspec.Struct):
+    user_id: Optional[UUID] = None
+    room_id: Optional[UUID] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    sort_order: str = "desc"
+    limit: int = 50
+    offset: int = 0
+
+class BatchExpPayload(msgspec.Struct):
+    exp_to_add: int
+
+class BatchExpResponse(msgspec.Struct):
+    new_level: int
+    levels_gained: int
+    leveled_up: bool
+
+class SyncSessionResponse(msgspec.Struct):
+    total_exp_gained: int
+    time_trials_completed: int
