@@ -6,7 +6,7 @@ from app.core.openapi import openapi_config
 from app.core.security import jwt_auth
 from app.api.v1.sync_controller import SyncController
 from app.api.v1.auth_controller import AuthController
-from app.api.v1.sessionReportsController import SessionsReportsController
+from app.api.v1.session_controller import SessionsReportsController
 from app.api.v1.ms_status_controller import MsStatusController
 from app.core.lifespan import http_client_lifespan
 from app.core.exceptions import GLOBAL_EXCEPTION_HANDLERS

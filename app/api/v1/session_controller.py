@@ -1,11 +1,11 @@
 from uuid import UUID
-from typing import Annotated
+from datetime import datetime
 from litestar import Controller, get, Request
 from litestar.datastructures import State
-from litestar.params import Parameter
-
-from app.domain.structs import SessionReportResponse, ReportFilters
+from typing import Optional, Annotated
+from litestar.params import QueryParameter
 from app.services.report_service import orchestrate_session_reports
+from app.domain.structs import SessionReportResponse, ReportFilters
 
 class SessionsReportsController(Controller):
     path = "/sessions"
@@ -16,9 +16,25 @@ class SessionsReportsController(Controller):
         self, 
         request: Request,
         state: State,
-        filters: Annotated[ReportFilters, Parameter(query="*")]
+        limit: Annotated[int, QueryParameter()] = 50,
+        sort_order: Annotated[str, QueryParameter()] = "desc",
+        offset: Annotated[int, QueryParameter()] = 0,
+        user_id: Annotated[Optional[UUID], QueryParameter()] = None,
+        room_id: Annotated[Optional[UUID], QueryParameter()] = None,
+        start_date: Annotated[Optional[datetime], QueryParameter()] = None,
+        end_date: Annotated[Optional[datetime], QueryParameter()] = None
     ) -> SessionReportResponse:
         
+        filters = ReportFilters(
+            limit=limit,
+            sort_order=sort_order,
+            offset=offset,
+            user_id=user_id,
+            room_id=room_id,
+            start_date=start_date,
+            end_date=end_date
+        )
+
         auth_header = request.headers.get("Authorization")
         raw_token = auth_header.replace("Bearer ", "") if auth_header else ""
         
