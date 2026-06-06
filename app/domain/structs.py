@@ -73,15 +73,6 @@ class SessionReportResponse(BaseModel):
     reports: List[SessionReportItem]
     total_count: int
 
-class ReportFilters(msgspec.Struct):
-    user_id: Optional[UUID] = None
-    room_id: Optional[UUID] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    sort_order: str = "desc"
-    limit: int = 50
-    offset: int = 0
-
 class BatchExpPayload(msgspec.Struct):
     exp_to_add: int
 
@@ -93,3 +84,21 @@ class BatchExpResponse(msgspec.Struct):
 class SyncSessionResponse(msgspec.Struct):
     total_exp_gained: int
     time_trials_completed: int
+
+class MSItemResponse(msgspec.Struct):
+    id: UUID
+    name: str
+
+class MSInventoryPayload(msgspec.Struct):
+    user_id: UUID
+    item_id: UUID
+    is_equipped: bool = False
+
+class ReportFilters(msgspec.Struct):
+    user_id: Optional[UUID] = None
+    room_id: Optional[UUID] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    sort_order: str = "desc"
+    limit: int = 50
+    offset: int = 0
