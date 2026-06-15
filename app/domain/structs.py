@@ -68,7 +68,7 @@ class SessionReportItem(BaseModel):
     end_time: datetime
     exp_earned: int
     room_id: Optional[UUID] = None
-    exp_multiplier: float = 1.0
+    xp_multiplier: float = 1.0
 
 class SessionReportResponse(BaseModel):
     reports: List[SessionReportItem]
@@ -103,3 +103,29 @@ class ReportFilters(BaseModel):
     sort_order: str = "desc"
     limit: int = 50
     offset: int = 0
+
+class RoomCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    capacity: int = 5
+    xp_multiplier: float = 1.3
+
+class RoomResponse(BaseModel):
+    id: UUID
+    name: str
+    description: Optional[str]
+    capacity: int
+    creator_id: UUID
+    status: str
+    xp_multiplier: float
+    invitation_code: Optional[str] = None
+    qr_code: Optional[str] = None
+    started_at: Optional[datetime] = None
+    ended_at: Optional[datetime] = None
+
+class JoinRoomRequest(BaseModel):
+    invitation_code: str
+
+class MemberResponse(BaseModel):
+    message: str
+    room_id: Optional[UUID] = None
