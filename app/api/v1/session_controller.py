@@ -6,15 +6,20 @@ from typing import Optional, Annotated
 from litestar.params import QueryParameter
 from app.services.report_service import orchestrate_session_reports
 from app.domain.structs import SessionReportResponse, ReportFilters
+from app.dependencies.auth import provide_raw_token
+from litestar.di import Provide
 
 class SessionsReportsController(Controller):
     path = "/sessions"
     tags = ["Reportes"]
 
+    dependencies = {"raw_token": Provide(provide_raw_token)}
+
     @get("/reports")
     async def get_reports(
         self, 
         request: Request,
+        raw_token: str,
         state: State,
         limit: Annotated[int, QueryParameter()] = 50,
         sort_order: Annotated[str, QueryParameter()] = "desc",
@@ -35,9 +40,6 @@ class SessionsReportsController(Controller):
             end_date=end_date
         )
 
-        auth_header = request.headers.get("Authorization")
-        raw_token = auth_header.replace("Bearer ", "") if auth_header else ""
-        
         user_data = request.user
         logged_user_id = UUID(str(user_data.get("sub")))
         user_role = user_data.get("role", "student")
