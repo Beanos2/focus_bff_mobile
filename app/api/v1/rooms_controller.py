@@ -67,3 +67,5 @@ class RoomsController(Controller):
         raw_token: str
     ) -> MemberResponse:
         return await rooms_service.proxy_leave_room(state.http_client, room_id, raw_token)
+    
+    

@@ -99,19 +99,25 @@ async def test_orchestrate_sync_with_room_bonus(
 @patch("app.services.sync_service.auth_client.add_batch_exp", new_callable=AsyncMock)
 @patch("app.services.sync_service.stats_client.process_batch_sessions", new_callable=AsyncMock)
 async def test_orchestrate_sync_room_offline_fallback(
-    mock_stats, mock_auth, mock_get_room, mock_http_client
+    mock_stats, mock_auth, mock_get_room, mock_http_client, valid_sync_payload
 ):
-    room_id = uuid4()
-    payload_with_room = SyncPayload(
-        sessions=[SessionItem(activity_type="focus", start_time=datetime.now(timezone.utc), end_time=datetime.now(timezone.utc), room_id=room_id)]
-    )
-
     import httpx
+
     mock_get_room.side_effect = httpx.RequestError("Offline")
     mock_stats.return_value = SyncSessionResponse(total_exp_gained=100, time_trials_completed=0)
     mock_auth.return_value = BatchExpResponse(new_level=2, levels_gained=0, leveled_up=False)
 
-    await orchestrate_sync(mock_http_client, payload_with_room, "fake_token")
+    valid_sync_payload.sessions[0].room_id = uuid4()
+    await orchestrate_sync(mock_http_client, valid_sync_payload, "token")
+    assert mock_stats.call_args.kwargs["payload"].sessions[0].xp_multiplier == 1.0
 
-    payload_enviado = mock_stats.call_args.kwargs["payload"]
-    assert payload_enviado.sessions[0].xp_multiplier == 1.0
+@pytest.mark.asyncio
+@patch("app.services.sync_service.stats_client.process_batch_sessions", new_callable=AsyncMock)
+async def test_orchestrate_sync_internal_error(mock_stats, mock_http_client, valid_sync_payload):
+    mock_req = httpx.Request("POST", "")
+    mock_stats.side_effect = httpx.HTTPStatusError("Error", request=mock_req, response=httpx.Response(500, request=mock_req))
+    
+    with pytest.raises(HTTPException) as exc:
+        await orchestrate_sync(mock_http_client, valid_sync_payload, "token")
+    assert exc.value.status_code == 500
+    

@@ -83,3 +83,26 @@ def test_controller_list_rooms(mock_proxy_list):
     assert response.status_code == 200
     assert isinstance(response.json(), list)
     assert mock_proxy_list.call_args.args[1] == "token_list"
+
+@patch("app.api.v1.rooms_controller.rooms_service.proxy_end_room")
+def test_controller_end_room(mock_proxy_end):
+    fake_room = RoomResponse(id=uuid4(), name="Test", capacity=5, creator_id=uuid4(), status="ended", xp_multiplier=1.0, description=None)
+    mock_proxy_end.return_value = fake_room
+    room_id = uuid4()
+
+    with TestClient(app=app_test) as client:
+        response = client.post(f"/rooms/{room_id}/end", headers={"Authorization": "Bearer tkn"})
+
+    assert response.status_code == 200
+    assert mock_proxy_end.call_args.args[2] == "tkn"
+
+@patch("app.api.v1.rooms_controller.rooms_service.proxy_leave_room")
+def test_controller_leave_room(mock_proxy_leave):
+    mock_proxy_leave.return_value = MemberResponse(message="Left", room_id=uuid4())
+    room_id = uuid4()
+
+    with TestClient(app=app_test) as client:
+        response = client.delete(f"/rooms/{room_id}/leave", headers={"Authorization": "Bearer tkn"})
+
+    assert response.status_code == 200
+    assert mock_proxy_leave.call_args.args[2] == "tkn"

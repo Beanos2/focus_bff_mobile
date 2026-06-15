@@ -2,8 +2,9 @@ import pytest
 import httpx
 import msgspec
 from unittest.mock import patch
-from app.clients.auth_client import proxy_login, add_batch_exp
-from app.domain.structs import LoginPayload, TokenResponse, BatchExpResponse
+from app.clients.auth_client import proxy_login, add_batch_exp,proxy_register
+from app.domain.structs import LoginPayload, TokenResponse, BatchExpResponse,RegisterPayload, RegisterResponse
+from uuid import uuid4
 
 @pytest.mark.asyncio
 @patch.object(httpx.AsyncClient, "post")
@@ -34,3 +35,11 @@ async def test_add_batch_exp_client(mock_patch, mock_http_client):
     assert res.new_level == 12
     assert res.leveled_up is True
     mock_patch.assert_called_once()
+
+@pytest.mark.asyncio
+@patch.object(httpx.AsyncClient, "post")
+async def test_proxy_register_client(mock_post, mock_http_client):
+    mock_res = RegisterResponse(message="OK", id=uuid4(), email="t@t.com")
+    mock_post.return_value = httpx.Response(201, content=msgspec.json.encode(mock_res), request=httpx.Request("POST", ""))
+    res = await proxy_register(mock_http_client, RegisterPayload(email="t@t.com", password="123"))
+    assert res.email == "t@t.com"

@@ -36,5 +36,5 @@ app = Litestar(
     debug=False
 )
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no covers
     uvicorn.run("app.main:app", host="0.0.0.0", port=PUERTO, reload=True)
