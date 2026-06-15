@@ -68,6 +68,7 @@ class SessionReportItem(BaseModel):
     end_time: datetime
     exp_earned: int
     room_id: Optional[UUID] = None
+    exp_multiplier: float = 1.0
 
 class SessionReportResponse(BaseModel):
     reports: List[SessionReportItem]
