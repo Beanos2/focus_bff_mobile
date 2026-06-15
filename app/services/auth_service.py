@@ -1,6 +1,5 @@
 import httpx
-from litestar.exceptions import HTTPException
-from litestar import status_codes
+from app.core.exceptions import handle_httpx_error
 from app.domain.structs import RegisterPayload, RegisterResponse, LoginPayload, TokenResponse
 from app.clients.auth_client import proxy_register, proxy_login
 
@@ -10,16 +9,8 @@ async def orchestrate_register(
 ) -> RegisterResponse:
     try:
         return await proxy_register(client=http_client, payload=data)
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(
-            detail="Error en el registro (¿correo duplicado?)", 
-            status_code=e.response.status_code
-        )
-    except httpx.RequestError:
-        raise HTTPException(
-            detail="El servicio de autenticación se encuentra fuera de línea.", 
-            status_code=status_codes.HTTP_503_SERVICE_UNAVAILABLE
-        )
+    except httpx.HTTPError as e:
+        handle_httpx_error(e, "Error en el registro (¿correo duplicado?)")
     
 async def orchestrate_login(
     http_client: httpx.AsyncClient,
@@ -27,13 +18,5 @@ async def orchestrate_login(
 ) -> TokenResponse:
     try:
         return await proxy_login(client=http_client, payload=data)
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(
-            detail="Credenciales inválidas", 
-            status_code=e.response.status_code
-        )
-    except httpx.RequestError:
-        raise HTTPException(
-            detail="El servicio de autenticación se encuentra fuera de línea.", 
-            status_code=status_codes.HTTP_503_SERVICE_UNAVAILABLE
-        )
+    except httpx.HTTPError as e:
+        handle_httpx_error(e, "Credenciales inválidas")

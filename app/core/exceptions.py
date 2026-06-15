@@ -2,6 +2,9 @@ import logging
 from litestar import Request, Response
 from litestar.exceptions import HTTPException
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
+import httpx
+from litestar.status_codes import HTTP_503_SERVICE_UNAVAILABLE
+from typing import NoReturn
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,7 +40,26 @@ def http_exception_handler(request: Request, exc: HTTPException) -> Response:
         status_code=exc.status_code,
     )
 
+
 GLOBAL_EXCEPTION_HANDLERS = {
     Exception: internal_server_error_handler,
     HTTPException: http_exception_handler,
 }
+
+def handle_httpx_error(e: httpx.HTTPError, default_msg: str = "Error en el servicio interno.") -> NoReturn:
+    if isinstance(e, httpx.HTTPStatusError):
+        try:
+            error_data = e.response.json()
+            detail = error_data.get("detail", default_msg)
+        except Exception:
+            detail = default_msg
+            
+        raise HTTPException(detail=detail, status_code=e.response.status_code)
+        
+    elif isinstance(e, httpx.RequestError):
+        raise HTTPException(
+            detail="Un servicio interno se encuentra fuera de línea.", 
+            status_code=HTTP_503_SERVICE_UNAVAILABLE
+        )
+        
+    raise HTTPException(detail=default_msg, status_code=500)
