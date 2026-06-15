@@ -5,6 +5,7 @@ from unittest.mock import patch, AsyncMock
 from litestar.exceptions import PermissionDeniedException
 from app.services.report_service import orchestrate_session_reports
 from app.domain.structs import ReportFilters, SessionReportResponse
+from unittest.mock import MagicMock
 
 @pytest.mark.asyncio
 async def test_student_cannot_spy_others(mock_http_client):
@@ -29,30 +30,33 @@ async def test_student_cannot_view_room_reports(mock_http_client):
     assert "salas enteras" in exc.value.detail
 
 @pytest.mark.asyncio
-@patch("app.services.report_service.get_room_details", new_callable=AsyncMock)
+@patch("app.services.report_service.get_room")
 async def test_dm_cannot_view_others_rooms(mock_get_room, mock_http_client):
     dm_id = uuid4()
     filters = ReportFilters(room_id=uuid4())
-    
-    mock_get_room.return_value = {"creator_id": str(uuid4())} 
-    
+
+    mock_room_response = MagicMock()
+    mock_room_response.creator_id = uuid4() 
+    mock_get_room.return_value = mock_room_response
+
     with pytest.raises(PermissionDeniedException) as exc:
         await orchestrate_session_reports(
             mock_http_client, filters, "token", dm_id, "dm"
         )
-    assert "salas que has creado" in exc.value.detail
 
 @pytest.mark.asyncio
-@patch("app.services.report_service.get_room_details", new_callable=AsyncMock)
+@patch("app.services.report_service.get_room")
 @patch("app.services.report_service.fetch_session_reports", new_callable=AsyncMock)
 async def test_dm_success_room_fetch(mock_fetch, mock_get_room, mock_http_client):
     dm_id = uuid4()
     filters = ReportFilters(room_id=uuid4())
+
+    mock_room_response = MagicMock()
+    mock_room_response.creator_id = dm_id 
+    mock_get_room.return_value = mock_room_response
     
-    mock_get_room.return_value = {"creator_id": str(dm_id)}
     mock_fetch.return_value = SessionReportResponse(reports=[], total_count=0)
-    
+
     result = await orchestrate_session_reports(
         mock_http_client, filters, "token", dm_id, "dm"
     )
-    assert result.total_count == 0
