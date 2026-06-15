@@ -33,6 +33,7 @@ class SessionItem(BaseModel):
     start_time: datetime
     end_time: datetime   
     room_id: Optional[UUID] = None 
+    xp_multiplier: float = 1.0
 
 class SyncPayload(BaseModel):
     sessions: List[SessionItem]
@@ -68,7 +69,6 @@ class SessionReportItem(BaseModel):
     end_time: datetime
     exp_earned: int
     room_id: Optional[UUID] = None
-    xp_multiplier: float = 1.0
 
 class SessionReportResponse(BaseModel):
     reports: List[SessionReportItem]
