@@ -7,8 +7,9 @@ from litestar.di import Provide
 from app.domain.structs import RoomResponse, RoomCreate, JoinRoomRequest, MemberResponse
 from app.services import rooms_service
 from app.dependencies.auth import provide_raw_token
+from litestar.params import PathParameter
 
-class BFFRoomsController(Controller):
+class RoomsController(Controller):
     path = "/rooms"
     tags = ["Salas"]
 
@@ -35,7 +36,7 @@ class BFFRoomsController(Controller):
     async def get_room(
         self, 
         state: State, 
-        room_id: Annotated[UUID, params.Parameter()], 
+        room_id: Annotated[UUID, PathParameter(title="ID de la Sala")], 
         raw_token: str
     ) -> RoomResponse:
         return await rooms_service.proxy_get_room(state.http_client, room_id, raw_token)
@@ -44,7 +45,7 @@ class BFFRoomsController(Controller):
     async def end_room(
         self, 
         state: State, 
-        room_id: Annotated[UUID, params.Parameter()], 
+        room_id: Annotated[UUID, PathParameter(title="ID de la Sala")], 
         raw_token: str
     ) -> RoomResponse:
         return await rooms_service.proxy_end_room(state.http_client, room_id, raw_token)
@@ -62,7 +63,7 @@ class BFFRoomsController(Controller):
     async def leave_room(
         self, 
         state: State, 
-        room_id: Annotated[UUID, params.Parameter()], 
+        room_id: Annotated[UUID, PathParameter(title="ID de la Sala")], 
         raw_token: str
     ) -> MemberResponse:
         return await rooms_service.proxy_leave_room(state.http_client, room_id, raw_token)
