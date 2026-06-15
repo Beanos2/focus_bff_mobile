@@ -13,7 +13,7 @@ class SessionsReportsController(Controller):
     path = "/sessions"
     tags = ["Reportes"]
 
-    dependencies = {"raw_token": Provide(provide_raw_token)}
+    dependencies = {"raw_token": Provide(provide_raw_token, sync_to_thread=False)}
 
     @get("/reports")
     async def get_reports(

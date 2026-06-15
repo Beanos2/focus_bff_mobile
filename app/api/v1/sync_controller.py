@@ -1,4 +1,4 @@
-from litestar import Controller, post, Request
+from litestar import Controller, post
 from litestar.datastructures import State
 from app.domain.structs import SyncPayload, SyncResponse
 from app.services.sync_service import orchestrate_sync
@@ -9,7 +9,7 @@ class SyncController(Controller):
     path = "/sync"
     tags = ["Sincronización"]
     
-    dependencies = {"raw_token": Provide(provide_raw_token)}
+    dependencies = {"raw_token": Provide(provide_raw_token, sync_to_thread=False)}
 
     @post()
     async def sync_offline_data(
