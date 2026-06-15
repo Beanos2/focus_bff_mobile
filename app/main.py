@@ -8,6 +8,7 @@ from app.api.v1.sync_controller import SyncController
 from app.api.v1.auth_controller import AuthController
 from app.api.v1.session_controller import SessionsReportsController
 from app.api.v1.ms_status_controller import MsStatusController
+from app.api.v1.rooms_controller import RoomsController
 from app.core.lifespan import http_client_lifespan
 from app.core.exceptions import GLOBAL_EXCEPTION_HANDLERS
 
@@ -21,7 +22,8 @@ api_v1_router = Router(
         AuthController, 
         SyncController,
         MsStatusController,
-        SessionsReportsController
+        SessionsReportsController,
+        RoomsController
     ]
 )
 
@@ -34,5 +36,5 @@ app = Litestar(
     debug=False
 )
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no covers
     uvicorn.run("app.main:app", host="0.0.0.0", port=PUERTO, reload=True)

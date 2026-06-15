@@ -42,3 +42,11 @@ async def test_orchestrate_register_success(mock_proxy, mock_http_client):
     assert result.message == "Created"
     assert result.id == user_id
     mock_proxy.assert_called_once_with(client=mock_http_client, payload=payload)
+
+@pytest.mark.asyncio
+@patch("app.services.auth_service.proxy_register", new_callable=AsyncMock)
+async def test_orchestrate_register_fails(mock_proxy, mock_http_client):
+    mock_req = httpx.Request("POST", "")
+    mock_proxy.side_effect = httpx.HTTPStatusError("Error", request=mock_req, response=httpx.Response(400, request=mock_req))
+    with pytest.raises(HTTPException):
+        await orchestrate_register(mock_http_client, RegisterPayload(email="t@t.com", password="123"))
