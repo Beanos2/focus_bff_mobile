@@ -55,7 +55,7 @@ class RewardItem(BaseModel):
 class SyncResponse(BaseModel):
     status: str
     processed_sessions_count: int
-    total_exp_gained: int
+    total_exp: int
     current_level: int
     leveled_up: bool
     levels_gained: int
@@ -81,6 +81,7 @@ class BatchExpResponse(BaseModel):
     new_level: int
     levels_gained: int
     leveled_up: bool
+    total_xp: int
 
 class SyncSessionResponse(BaseModel):
     total_exp_gained: int
