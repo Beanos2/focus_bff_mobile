@@ -11,7 +11,7 @@ async def process_batch_sessions(
     payload: SyncPayload,
     raw_token: str
 ) -> SyncSessionResponse:
-    url = f"{STATS_URL}/api/v1/sessions/sync"
+    url = f"{STATS_URL}/api/v1/sessions/batch"
     headers = {"Authorization": f"Bearer {raw_token}", "Content-Type": "application/json"}
     content = msgspec.json.encode(payload)
     response = await client.post(url, content=content, headers=headers)
