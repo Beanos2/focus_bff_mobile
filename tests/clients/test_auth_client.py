@@ -24,7 +24,7 @@ async def test_proxy_login_client(mock_post, mock_http_client):
 @pytest.mark.asyncio
 @patch.object(httpx.AsyncClient, "patch")
 async def test_add_batch_exp_client(mock_patch, mock_http_client):
-    mock_res = BatchExpResponse(new_level=12, levels_gained=2, leveled_up=True)
+    mock_res = BatchExpResponse(new_level=12, levels_gained=2, leveled_up=True,total_xp=200)
     mock_patch.return_value = httpx.Response(
     200, 
     content=msgspec.json.encode(mock_res),

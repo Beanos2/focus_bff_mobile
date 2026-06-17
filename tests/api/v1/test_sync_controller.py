@@ -12,7 +12,7 @@ def test_sync_controller_success(mock_orchestrate, test_client):
     mock_orchestrate.return_value = SyncResponse(
         status="synchronized",
         processed_sessions_count=1,
-        total_exp_gained=100,
+        total_exp=100,
         current_level=2,
         leveled_up=True,
         levels_gained=1,
@@ -36,7 +36,7 @@ def test_sync_controller_success(mock_orchestrate, test_client):
     assert response.status_code == 201  
     data = response.json()
     assert data["status"] == "synchronized"
-    assert data["total_exp_gained"] == 100
+    assert data["total_exp"] == 100
 
     mock_orchestrate.assert_called_once()
     assert mock_orchestrate.call_args.kwargs["raw_token"] == token
