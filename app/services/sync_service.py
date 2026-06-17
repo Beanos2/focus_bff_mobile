@@ -51,6 +51,7 @@ async def orchestrate_sync(
         status="synchronized",
         processed_sessions_count=len(data.sessions),
         total_exp=auth_data.total_xp,
+        total_exp_gained=stats_data.total_exp_gained,
         current_level=auth_data.new_level,
         leveled_up=auth_data.leveled_up,
         levels_gained=auth_data.levels_gained,

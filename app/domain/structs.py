@@ -56,6 +56,7 @@ class SyncResponse(BaseModel):
     status: str
     processed_sessions_count: int
     total_exp: int
+    total_exp_gained: int
     current_level: int
     leveled_up: bool
     levels_gained: int
