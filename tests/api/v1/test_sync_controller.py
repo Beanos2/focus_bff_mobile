@@ -13,6 +13,7 @@ def test_sync_controller_success(mock_orchestrate, test_client):
         status="synchronized",
         processed_sessions_count=1,
         total_exp=100,
+        total_exp_gained=50,
         current_level=2,
         leveled_up=True,
         levels_gained=1,
