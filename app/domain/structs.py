@@ -82,7 +82,7 @@ class BatchExpResponse(BaseModel):
     new_level: int
     levels_gained: int
     leveled_up: bool
-    total_xp: int
+    total_exp: int
 
 class SyncSessionResponse(BaseModel):
     total_exp_gained: int

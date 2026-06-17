@@ -31,7 +31,7 @@ async def test_orchestrate_sync_level_up(
 ):
 
     mock_stats.return_value = SyncSessionResponse(total_exp_gained=500, time_trials_completed=0)
-    mock_auth.return_value = BatchExpResponse(new_level=5, levels_gained=2, leveled_up=True,total_xp=500)
+    mock_auth.return_value = BatchExpResponse(new_level=5, levels_gained=2, leveled_up=True,total_exp=500)
 
     mock_inv.return_value = RewardItem(id=uuid4(), name="Espada Épica")
 
@@ -85,7 +85,7 @@ async def test_orchestrate_sync_with_room_bonus(
     mock_get_room.return_value = fake_room
     
     mock_stats.return_value = SyncSessionResponse(total_exp_gained=150, time_trials_completed=0)
-    mock_auth.return_value = BatchExpResponse(new_level=2, levels_gained=0, leveled_up=False,total_xp=100)
+    mock_auth.return_value = BatchExpResponse(new_level=2, levels_gained=0, leveled_up=False,total_exp=100)
 
     await orchestrate_sync(mock_http_client, payload_with_room, "fake_token")
 
@@ -105,7 +105,7 @@ async def test_orchestrate_sync_room_offline_fallback(
 
     mock_get_room.side_effect = httpx.RequestError("Offline")
     mock_stats.return_value = SyncSessionResponse(total_exp_gained=100, time_trials_completed=0)
-    mock_auth.return_value = BatchExpResponse(new_level=2, levels_gained=0, leveled_up=False,total_xp=100)
+    mock_auth.return_value = BatchExpResponse(new_level=2, levels_gained=0, leveled_up=False,total_exp=100)
 
     valid_sync_payload.sessions[0].room_id = uuid4()
     await orchestrate_sync(mock_http_client, valid_sync_payload, "token")
