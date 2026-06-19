@@ -131,3 +131,7 @@ class JoinRoomRequest(BaseModel):
 class MemberResponse(BaseModel):
     message: str
     room_id: Optional[UUID] = None
+
+class UserStatsResponse(BaseModel):
+    total_exp: int
+    current_level: int
