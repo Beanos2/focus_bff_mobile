@@ -3,7 +3,7 @@ import os
 import msgspec
 from app.domain.structs import (
     RegisterPayload, RegisterResponse, LoginPayload, TokenResponse,
-    BatchExpPayload, BatchExpResponse
+    BatchExpPayload, BatchExpResponse, UserStatsResponse
 )
 
 AUTH_URL = os.getenv("AUTH_SERVICE_URL","http://127.0.0.1:8001")
@@ -39,3 +39,14 @@ async def add_batch_exp(
     response = await client.patch(url, content=content, headers=headers)
     response.raise_for_status()
     return msgspec.json.decode(response.content, type=BatchExpResponse)
+
+async def get_my_level_and_exp(
+    client: httpx.AsyncClient,
+    raw_token: str
+) -> UserStatsResponse:
+    
+    url = f"{AUTH_URL}/api/v1/users/me/stats"
+    headers = {"Authorization": f"Bearer {raw_token}", "Content-Type": "application/json"}
+    response = await client.get(url,headers=headers)
+    response.raise_for_status()
+    return msgspec.json.decode(response.content, type=UserStatsResponse)
