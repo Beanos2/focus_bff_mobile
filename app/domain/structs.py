@@ -110,7 +110,7 @@ class RoomCreate(BaseModel):
     name: str
     description: Optional[str] = None
     capacity: int = 5
-    xp_multiplier: float = 1.3,
+    xp_multiplier: float = 1.3
     valid_from_time: time | None = None
     valid_until_time: time | None = None
 
