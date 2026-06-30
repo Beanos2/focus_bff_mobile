@@ -4,6 +4,8 @@ from litestar import status_codes
 from app.clients import stats_client, auth_client, inv_client, rooms_client
 from app.domain.structs import SyncPayload, SyncResponse
 from app.core.exceptions import handle_httpx_error
+from app.util.evaluate_session_with_room import evaluate_session_room_rules
+
 
 async def orchestrate_sync(
     http_client: httpx.AsyncClient,
@@ -23,11 +25,17 @@ async def orchestrate_sync(
             if room_id_str not in room_cache:
                 try:
                     room_info = await rooms_client.get_room(http_client, session.room_id, raw_token)
-                    room_cache[room_id_str] = room_info.xp_multiplier if room_info.status == "active" else 1.0
+                    room_cache[room_id_str] = room_info
                 except httpx.HTTPError:
-                    room_cache[room_id_str] = 1.0
+                    room_cache[room_id_str] = None
             
-            session.xp_multiplier = room_cache[room_id_str]
+            room_info = room_cache[room_id_str]
+            multiplier, keep_room = evaluate_session_room_rules(session.end_time, room_info)
+            session.xp_multiplier = multiplier
+            if not keep_room:
+                session.room_id = None
+        else:
+            session.xp_multiplier = 1.0
 
     try:
         stats_data = await stats_client.process_batch_sessions(client=http_client, payload=data, raw_token=raw_token)

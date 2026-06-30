@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List, Optional, TypeVar, Type, Any
-from datetime import datetime
+from datetime import datetime, time
 from uuid import UUID
 import msgspec
 
@@ -110,7 +110,9 @@ class RoomCreate(BaseModel):
     name: str
     description: Optional[str] = None
     capacity: int = 5
-    xp_multiplier: float = 1.3
+    xp_multiplier: float = 1.3,
+    valid_from_time: time | None = None
+    valid_until_time: time | None = None
 
 class RoomResponse(BaseModel):
     id: UUID
@@ -124,6 +126,8 @@ class RoomResponse(BaseModel):
     qr_code: Optional[str] = None
     started_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
+    valid_from_time: time | None = None
+    valid_until_time: time | None = None
 
 class JoinRoomRequest(BaseModel):
     invitation_code: str
