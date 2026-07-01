@@ -31,7 +31,8 @@ class RegisterPayload(BaseModel):
 class SessionItem(BaseModel):
     activity_type: str
     start_time: datetime
-    end_time: datetime   
+    end_time: datetime
+    client_reported_exp: int = 0
     room_id: Optional[UUID] = None 
     xp_multiplier: float = 1.0
 
